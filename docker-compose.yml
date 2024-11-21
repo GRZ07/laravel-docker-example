@@ -1,0 +1,210 @@
+services:
+
+  # Laravel Container 4
+  app4:
+    image: laravel_app_image
+    container_name: laravel_app4
+    depends_on:
+      - core_db
+      - db4
+    environment:
+      # Dedicated Database Configuration
+      DEDICATED_DB_HOST: db4
+      DEDICATED_DB_PORT: 3306
+      DEDICATED_DB_DATABASE: app4_db
+      DEDICATED_DB_USERNAME: user4
+      DEDICATED_DB_PASSWORD: pass4
+      # Laravel-specific Configuration
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_KEY: base64:Bbs++oZLQOyCOH7nY83Rm3t9WBX0jMotq4QAwjleTF0=
+      APP_URL: http://localhost:8004
+    ports:
+      - "8004:80"
+    volumes:
+      - ./laravel:/var/www/html
+      - ./docker/laravel/envs/.env.app4:/var/www/html/.env
+    networks:
+      - app-network
+
+  db4:
+    image: mysql:8.0
+    container_name: db4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: app4_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: user4
+      MYSQL_PASSWORD: pass4
+    volumes:
+      - db4_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Laravel Container 3
+  app3:
+    image: laravel_app_image
+    container_name: laravel_app3
+    depends_on:
+      - core_db
+      - db3
+    environment:
+      # Dedicated Database Configuration
+      DEDICATED_DB_HOST: db3
+      DEDICATED_DB_PORT: 3306
+      DEDICATED_DB_DATABASE: app3_db
+      DEDICATED_DB_USERNAME: user3
+      DEDICATED_DB_PASSWORD: pass3
+      # Laravel-specific Configuration
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_KEY: base64:ZlikLUup3b1xWK3shrBUKja3BT7JKz1iCdvTfC6VIwM=
+      APP_URL: http://localhost:8003
+    ports:
+      - "8003:80"
+    volumes:
+      - ./laravel:/var/www/html
+      - ./docker/laravel/envs/.env.app3:/var/www/html/.env
+    networks:
+      - app-network
+
+  db3:
+    image: mysql:8.0
+    container_name: db3
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: app3_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: user3
+      MYSQL_PASSWORD: pass3
+    volumes:
+      - db3_data:/var/lib/mysql
+    networks:
+      - app-network
+
+ 
+  core_db:
+    image: mysql:8.0
+    container_name: core_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: core_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: core_user
+      MYSQL_PASSWORD: core_password
+    volumes:
+      - core_db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Laravel Application Image (Reusability)
+  laravel_app_image:
+    build:
+      context: .
+      dockerfile: ./docker/laravel/Dockerfile
+    image: laravel_app_image
+    restart: unless-stopped
+    environment:
+      CORE_DB_HOST: core_db
+      CORE_DB_PORT: 3306
+      CORE_DB_DATABASE: core_db
+      CORE_DB_USERNAME: core_user
+      CORE_DB_PASSWORD: core_password
+    networks:
+      - app-network
+
+  # Laravel Container 1
+  app1:
+    image: laravel_app_image
+    container_name: laravel_app1
+    depends_on:
+      - core_db
+      - db1
+    environment:
+      # Dedicated Database Configuration
+      DEDICATED_DB_HOST: db1
+      DEDICATED_DB_PORT: 3306
+      DEDICATED_DB_DATABASE: app1_db
+      DEDICATED_DB_USERNAME: user1
+      DEDICATED_DB_PASSWORD: pass1
+      # Laravel-specific Configuration
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_KEY: base64:VS+cT4+Cb11VIjlN2UzPRtgo5GOXr7RFNM1TSptU+98=
+      APP_URL: http://localhost:8001
+    ports:
+      - "8001:80"
+    volumes:
+      - ./laravel:/var/www/html
+      - ./docker/laravel/envs/.env.app1:/var/www/html/.env
+    networks:
+      - app-network
+
+  db1:
+    image: mysql:8.0
+    container_name: db1
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: app1_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: user1
+      MYSQL_PASSWORD: pass1
+    volumes:
+      - db1_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Laravel Container 2
+  app2:
+    image: laravel_app_image
+    container_name: laravel_app2
+    depends_on:
+      - core_db
+      - db2
+    environment:
+      # Dedicated Database Configuration
+      DEDICATED_DB_HOST: db2
+      DEDICATED_DB_PORT: 3306
+      DEDICATED_DB_DATABASE: app2_db
+      DEDICATED_DB_USERNAME: user2
+      DEDICATED_DB_PASSWORD: pass2
+      # Laravel-specific Configuration
+      APP_ENV: local
+      APP_DEBUG: true
+      APP_KEY: base64:kUJnJzK/UiAvmGgigO1k/Fo0sImiGfnvoTVL/snvvkQ=
+      APP_URL: http://localhost:8002
+    ports:
+      - "8002:80"
+    volumes:
+      - ./laravel:/var/www/html
+      - ./docker/laravel/envs/.env.app2:/var/www/html/.env
+    networks:
+      - app-network
+
+  db2:
+    image: mysql:8.0
+    container_name: db2
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: app2_db
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_USER: user2
+      MYSQL_PASSWORD: pass2
+    volumes:
+      - db2_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # Add more Laravel Containers and their Dedicated Databases here
+
+volumes:
+  db4_data:
+  db3_data:
+  core_db_data:
+  db1_data:
+  db2_data:
+  # Add more volumes as needed
+
+networks:
+  app-network:
+    driver: bridge
